@@ -36,7 +36,7 @@ const authenticateUser=(req,res,next)=>{
         const token = header1.split(' ')[1]
         jwt.verify(token , screteKey , (err,user)=>{
             if(err){
-                console.log(err)
+                // console.log(err)
                 return res.sendStatus(403)
             }
 
@@ -51,11 +51,11 @@ const authenticateUser=(req,res,next)=>{
 mongoose.connect('mongodb+srv://prathameshtheurkar037:Prathamesh%401@cluster0.s8asa1j.mongodb.net/' ,{dbName : "todos-app"} )
 
 app.post('/todos/signup' ,async  (req,res)=>{
-    const {username , password} = req.headers;
+    const {username , password} = req.body;
     const user = await User.findOne({username , password})
 
     if(user){
-        res.json({message : "User is already signed up!!"})
+        res.json({user: false ,message : "User is already signed up!!"})
     }else{
         const newUserObj = {
             username : username ,
@@ -65,20 +65,26 @@ app.post('/todos/signup' ,async  (req,res)=>{
         const newUser = new User(newUserObj)
         await newUser.save();
         const token = generateToken(newUserObj)
-        res.json({message : "Signed Up successfully!!" , token : token})
+        res.json({user: true , message : "Signed Up successfully!!" , token : token})
     }
 })
 
-app.post('/todos/login' , async (req , res)=>{
-    const {username , password} = req.headers;
+app.post('/todos/signin' , async (req , res)=>{
+    const {username , password} = req.body;
 
     const user = await User.findOne({username , password})
     if(user){
         const token = generateToken({username , password})
-        res.json({message : "User Login Successfully!!" , token : token})
+        res.json({user: true ,message : "User Login Successfully!!" , token : token})
     }else{
-        res.json({message : "User does not exits!!"})
+        res.json({user: false ,message : "User does not exits!!"})
     }
+})
+
+app.get('/todos/user' , authenticateUser , (req,res)=>{
+    res.json({
+        username : req.user.username
+    })
 })
 
 app.get('/todos' , authenticateUser ,async (req,res)=>{

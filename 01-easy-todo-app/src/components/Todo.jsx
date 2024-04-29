@@ -1,4 +1,6 @@
 /* eslint-disable react/prop-types */
+import {Button,  Typography} from '@mui/material';
+
 
 function Todo({title , description, id}) {
     // Add a delete button here so user can delete a TODO.
@@ -7,15 +9,30 @@ function Todo({title , description, id}) {
         method : 'DELETE',
         headers : {
           "Content-Type" : "application/json",
+          "Authorization" : "Bearer "+ localStorage.getItem('token')
         }
       })
     }
 
     return <div>
-        {title}
-        {description}
-        {/* {id} */}
-        <button onClick={deleteTodo}>Delete</button>
+        <Typography
+          variant={'h5'}
+        >{title}
+        </Typography>
+
+        <Typography
+          variant={'h5'}
+        >{description}
+        </Typography>
+  
+      
+        <Button 
+            variant="contained"
+            size={'small'}
+            onClick={deleteTodo}
+        >
+          Delete
+        </Button>
     </div>
 }
 
