@@ -63,7 +63,8 @@ app.post('/todos/signup' ,async  (req,res)=>{
             todos : []
         }
         const newUser = new User(newUserObj)
-        await newUser.save();
+        const dummyUser = await newUser.save();
+        console.log(dummyUser)
         const token = generateToken(newUserObj)
         res.json({user: true , message : "Signed Up successfully!!" , token : token})
     }
